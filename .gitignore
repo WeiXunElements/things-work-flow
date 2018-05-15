@@ -1,0 +1,11 @@
+node_modules
+dist
+bower_components
+.tmp
+.publish/
+
+npm-debug.log
+.DS_Store
+app/elements/things-bundles/demo
+
+app/elements/things-bundles/base/things-base-edu-demo.html

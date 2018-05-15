@@ -1,0 +1,314 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../paper-tabs/paper-tab.html">
+<link rel="import" href="../../paper-tabs/paper-tabs.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
+
+<link rel="import" href="../../things-ajax/things-ajax.html">
+<link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../../things-detail/things-resource-detail-tab-view-behavior.html">
+<link rel="import" href="../../things-form/things-resource-form.html">
+<link rel="import" href="../../things-meta/things-detail-form-meta-behavior.html">
+<link rel="import" href="../../things-msg-box-behavior/things-msg-box-behavior.html">
+
+<!--
+	업무함 - 기안 업무 상세 화면 
+-->
+
+<dom-module id="things-base-works-submit-detail">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+      iron-pages {
+        @apply(--things-default-padding);
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
+
+      paper-toolbar {
+        background-color:var(--things-white-background-color);
+        height: 60px;
+        @apply(--things-tight-padding);
+      }
+
+      paper-toolbar::shadow #bottomBar {
+        height: 50px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        padding: 0 10px;
+      }
+    </style>
+
+    <things-ajax
+      auto
+      id="get-resource"
+      method="GET"
+      resource-url="appr_docs/info/:id"
+      resource-id="[[resourceId]]"
+      last-response="{{taskResponse}}">
+    </things-ajax>
+
+    <things-ajax
+      id="finish-task"
+      method="POST"
+      resource-id="[[resourceId]]"
+      content-type="application/json">
+    </things-ajax>
+
+    <paper-tabs id="tabGroup" selected="{{currentTabIdx}}" noink scrollable>
+      <template is="dom-repeat" items="[[panels]]">
+        <paper-tab id="[[item.elementId]]">[[item.title]]</paper-tab>
+      </template>
+    </paper-tabs>
+
+    <things-i18n-msg msgid="label.title" msg="{{lTitle}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.status" msg="{{lStatus}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.appr_line" msg="{{lApprLine}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.submitter" msg="{{lSubmitter}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.approver_type" msg="{{lApproverType}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.approver" msg="{{lApprover}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.step" msg="{{lStep}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.action" msg="{{lAction}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.on_type" msg="{{lOnType}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.on_id" msg="{{lOnId}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.comment" msg="{{lComment}}" auto hidden></things-i18n-msg>
+
+    <iron-pages id="tabPages" selected="{{currentTabIdx}}">
+      <!-- 결재 정보 탭 -->
+      <div id="basic-task-info" class="layout vertical flex">
+        <div class="layout vertical flex">
+
+        	<div class="layout horizontal">
+          	<things-input-field class="flex" label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
+          	<things-input-field class="flex" label="[[lStatus]]" value="[[docStatus]]" readonly></things-input-field>
+        	</div>
+
+        	<div class="layout horizontal">
+        		<things-input-field class="flex" label="[[lApprLine]]" value="[[apprLine]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly></things-input-field>
+        	</div>
+
+        	<div class="layout horizontal">
+        		<things-input-field class="flex" label="[[lApproverType]]" value="[[approverType]]" readonly></things-input-field>
+        		<things-input-field class="flex" label="[[lApprover]]" value="[[approver]]" readonly></things-input-field>
+        	</div>
+
+        	<div class="layout horizontal">
+        		<things-input-field class="flex" label="[[lStep]]" value="[[step]]" readonly></things-input-field>
+        		<things-input-field class="flex" label="[[lAction]]" value="[[action]]" readonly></things-input-field>
+        	</div>
+
+        	<div class="layout horizontal">
+        		<things-input-field	class="flex" label="[[lOnType]]" value="[[onType]]" readonly></things-input-field>
+        		<things-input-field	class="flex" label="[[lOnId]]" value="[[onId]]" readonly></things-input-field>
+        	</div>
+
+          <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly></things-textarea>
+        </div>
+      </div>
+
+      <!-- 결재 문서 탭 -->
+      <div id="document-tab"></div>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'things-base-works-submit-detail',
+
+      behaviors: [
+        Things.MsgBoxBehavior,
+        Things.ResourceDetailTabViewBahavior,
+        Things.DetailFormMetaBehavior
+      ],
+
+      properties: {
+				
+				/**
+				 * 타이틀
+				 */
+				docTitle: {
+					type: String
+				},
+				
+				/**
+				 * 상태
+				 */
+				docStatus: {
+					type: String
+				},
+				
+				/**
+				 * 결재라인
+				 */
+				apprLine: {
+					type: String
+				},
+				
+				/**
+				 * 기안자
+				 */
+				submitter: {
+					type: String
+				},
+				
+				/**
+				 * 승인자 유형
+				 */
+				approverType: {
+					type: String
+				},
+				
+				/**
+				 * 승인자
+				 */
+				approver: {
+					type: String
+				},
+				
+				/**
+				 * 스텝
+				 */
+				step: {
+					type: String
+				},
+				
+				/**
+				 * 액션
+				 */
+				action: {
+					type: String
+				},
+				
+				/**
+				 * 리소스 타입
+				 */
+				resourceType: {
+					type: String
+				},
+				
+				/**
+				 * 리소스 아이디
+				 */
+				resourceId: {
+					type: String
+				},
+				
+				/**
+				 * 코멘트
+				 */
+				docComment: {
+					type: String
+				},
+
+        /**
+         * 탭 패널 
+         */
+        panels: {
+          type: Array,
+          value: function() {
+            return [ {
+              title: Things.DataGlobal.t('label.approval_info'),
+              elementId: 'basic-task-info'
+            }, {
+              title: Things.DataGlobal.t('label.appr_doc'),
+              elementId: 'document-tab'
+            } ];
+          }
+        },
+
+        /**
+         * id를 통해 조회한 task 정보
+         */
+        taskResponse: {
+          type: Object,
+          observer: '_taskResponseChanged'
+        }
+      },
+
+      /**
+       * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
+       */
+      _taskResponseChanged: function(response) {
+        var apprDoc = response.doc;
+				this.docTitle = apprDoc.name;
+				this.docStatus = apprDoc.status;
+				this.apprLine = apprDoc.appr_line.name;
+				this.submitter = apprDoc.submitter.name;
+				this.approverType = apprDoc.approver_type;
+				this.approver = apprDoc.approver.name;
+				this.step = apprDoc.step;
+				this.action = apprDoc.appr_action.name;
+				this.onType = apprDoc.on_type;
+				this.onId = apprDoc.on_id;
+				this.docComment = apprDoc.comments;
+        
+				var content = apprDoc.content;
+        var contentDoc = JSON.parse(content);
+        var validContentInput = false;
+
+        for(contentDoc in key) {
+          if(contentDoc[key]) {
+            validContentInput = true;
+          }
+        }
+
+        if(!validContentInput) {
+          this.openConfirmMsg({ type: 'warning', title: Things.DataGlobal.t('text.invalid_input'), text: Things.DataGlobal.t('text.X is empty', {x : Things.DataGlobal.t('label.appr_doc')}) });
+          return;
+        }
+
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
+        this.resourceFormFields = this._parseResourceFormFields(response.menuColumns);
+        this.menuInfo = response.menuInfo;
+
+        if(this.menuInfo.detail_form_id == 'things-resource-form') {
+          this._addResourceFormView(contentDoc);
+
+        } else if(this.menuInfo.detail_form_id == 'things-resource-detail') {
+          this._addResourceDetailView(contentDoc);
+
+        } else {
+          this._addCustomView(contentDoc);
+        }
+      },
+
+      /**
+       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
+       */
+      _addResourceFormView: function(contentDoc) {
+        var documentTab = this.$['document-tab'];
+        this.detailView = document.createElement('things-resource-form');
+        this.detailView.buttons = [];
+        this.detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(this.detailView);
+        this.detailView.setFormData(contentDoc);
+      },
+
+      /**
+       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
+       */
+      _addResourceDetailView: function(contentDoc) {
+        var documentTab = this.$['document-tab'];
+        this.detailView = document.createElement('things-resource-detail');
+        this.detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(this.detailView);
+      },
+
+      /**
+       * 결재 문서 탭에 커스텀 뷰를 삽입 
+       */
+      _addCustomView: function(contentDoc) {
+        var documentTab = this.$['document-tab'];
+        var detailView = document.createElement(this.menuInfo.detail_form_id);
+        detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(detailView); 
+      }
+    });
+  </script>
+</dom-module>

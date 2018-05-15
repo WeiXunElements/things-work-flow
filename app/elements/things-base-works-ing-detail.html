@@ -1,0 +1,434 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../paper-tabs/paper-tab.html">
+<link rel="import" href="../../paper-tabs/paper-tabs.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
+
+<link rel="import" href="../../things-ajax/things-ajax.html">
+<link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../../things-detail/things-resource-detail-tab-view-behavior.html">
+<link rel="import" href="../../things-form/things-resource-form.html">
+<link rel="import" href="../../things-meta/things-detail-form-meta-behavior.html">
+
+<!--
+  진행 중인 업무 처리 화면 
+-->
+
+<dom-module id="things-base-works-ing-detail">
+  <template>
+    <style>
+      :host {
+        display: block;
+        @apply(--layout-vertical);
+      }
+
+      iron-pages {
+        @apply(--things-default-padding);
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
+
+      paper-toolbar {
+        background-color:var(--things-white-background-color);
+        height: 60px;
+        @apply(--things-tight-padding);
+      }
+
+      paper-toolbar::shadow #bottomBar {
+        height: 50px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+        padding: 0 10px;
+      }
+
+      .subtitle:before {
+        content: "";
+        @apply(--things-subtitle-icon);
+      }
+
+      .subtitle {
+        @apply(--things-default-padding);
+        padding-bottom: 7px;
+        @apply(--things-subtitle);
+      }      
+    </style>
+
+    <things-ajax
+      auto
+      id="get-resource"
+      method="GET"
+      resource-url="appr_tasks/info/:id"
+      resource-id="[[resourceId]]"
+      last-response="{{taskResponse}}">
+    </things-ajax>
+
+    <things-ajax
+      id="finish-task"
+      method="POST"
+      resource-id="[[resourceId]]"
+      content-type="application/json">
+    </things-ajax>
+
+    <paper-tabs id="tabGroup" selected="{{currentTabIdx}}" noink scrollable>
+      <template is="dom-repeat" items="[[panels]]">
+        <paper-tab id="[[item.elementId]]">[[item.title]]</paper-tab>
+      </template>
+    </paper-tabs>
+
+    <things-i18n-msg msgid="label.title" msg="{{lTitle}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.submitter" msg="{{lSubmitter}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.created_at" msg="{{lRequestedAt}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.submit_comment" msg="{{lComment}}" auto hidden></things-i18n-msg>
+    <things-i18n-msg msgid="label.opinion" msg="{{lOpinion}}" auto hidden></things-i18n-msg>
+
+    <iron-pages id="tabPages" selected="{{currentTabIdx}}">
+      <!-- 결재 정보 탭 -->
+      <div id="basic-task-info" class="layout vertical flex">
+        <div class="layout vertical flex">
+          <things-input-field label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
+
+          <div class="layout horizontal">
+            <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lRequestedAt]]" value="[[createdAt]]" readonly></things-input-field>
+          </div>
+
+          <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly></things-textarea>
+          <things-textarea id="appr-comment" class="flex" label="[[lOpinion]]" value="[[opinion]]"></things-textarea>
+        </div>
+
+        <span class="subtitle">
+          <things-i18n-msg msgid="label.approval_history"></things-i18n-msg>
+        </span>
+
+        <!-- 결재 이력 -->
+        <div class="layout vertical flex">
+          <things-resource-grid 
+            class="flex"
+            id="step-grid"
+            model="[[stepGridModel]]"
+            columns="[[stepGridColumns]]"
+            current-page="1"
+            limit="1000"
+            data="[[steps]]"
+            fixed-column-count="0"
+            buttons="[[stepButton]]">
+          </things-resource-grid>
+        </div>
+
+        <paper-toolbar id="toolbar" justify='end'>
+          <div class="bottom">
+            <things-button-bar id="button-group" buttons="[[buttons]]"></things-button-bar>
+          </div>
+        </paper-toolbar>
+      </div>
+
+      <!-- 결재 문서 탭 -->
+      <div id="document-tab"></div>
+    </iron-pages>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'things-base-works-ing-detail',
+
+      behaviors: [ 
+        Things.ResourceDetailTabViewBahavior,
+        Things.DetailFormMetaBehavior
+      ],
+
+      properties: {
+        /**
+         * Step Buttons
+         */
+        stepButton: {
+          type: Array,
+          value: []
+        },
+
+        /**
+         * ApprTask ID
+         */
+        taskId: {
+          type: String,
+        },
+
+        /**
+         * 탭 패널 
+         */
+        panels: {
+          type: Array,
+          value: function() {
+            return [ {
+              title: Things.DataGlobal.t('label.approval_info'),
+              elementId: 'basic-task-info'
+            }, {
+              title: Things.DataGlobal.t('label.appr_doc'),
+              elementId: 'document-tab'
+            } ];
+          }
+        },
+
+        /**
+         * id를 통해 조회한 task 정보
+         */
+        taskResponse: {
+          type: Object,
+          observer: '_taskResponseChanged'
+        },
+
+        /**
+         * 문서 이름 
+         */
+        docTitle: {
+          type: String
+        },
+
+        /**
+         * 작성자
+         */
+        submitter: {
+          type: String
+        },
+
+        /**
+         * 작성일시
+         */
+        createdAt: {
+          type: String
+        },
+
+        /**
+         * 작성자 코멘트
+         */
+        docComment: {
+          type: String
+        },
+
+        /**
+         * 의견
+         */
+        opinion: {
+          type: String
+        },
+
+        /**
+         * 메뉴 정보 
+         */
+        menuInfo: {
+          type: Object,
+        },
+
+        /**
+         * Resource Form Fields
+         */
+        resourceFormFields: {
+          type: Array,
+        },
+
+        /**
+         * Grid Model
+         */
+        stepGridModel: {
+          type: Array,
+          value: [ {
+            fieldName: 'id'
+          }, {
+            fieldName: 'step'
+          }, {
+            fieldName: 'approver',
+            dataType: 'object'
+          }, {
+            fieldName: 'status'
+          }, {
+            fieldName: 'updated_at'
+          }, {
+            fieldName: 'comments'
+          } ]
+        },
+
+        /**
+         * Step grid columns
+         */
+        stepGridColumns: {
+          type: Array,
+          value: function() {
+            return [ {
+              name: 'id',
+              fieldName: 'id',
+              width: 0
+            }, {
+              name: 'step',
+              fieldName: 'step',
+              width: 50,
+              header: {
+                text: Things.DataGlobal.t('label.step')
+              }
+            }, {
+              name: 'status',
+              fieldName: 'status',
+              width: 100,
+              header: {
+                text: Things.DataGlobal.t('label.result')
+              }
+            }, {
+              name: 'approver',
+              fieldName: 'approver',
+              width: 180,
+              header: {
+                text: Things.DataGlobal.t('label.approver')
+              },
+              valueType: 'text', 
+              type: 'calced',
+              valueCallback: function(column, row) {
+                var obj = row.getValue(column._name);
+                return obj ? obj.name : '';
+              }
+            }, {
+              name: 'updated_at',
+              fieldName: 'updated_at',
+              width: 135,
+              lookupDisplay: true,
+              header: {
+                text: Things.DataGlobal.t('label.confirmed_at')
+              }
+            }, {
+              name: 'comments',
+              fieldName: 'comments',
+              width: 600,
+              header: { 
+                text: Things.DataGlobal.t('label.opinion')
+              }
+            } ];
+          },
+
+          /**
+           * Step data
+           */
+          steps: {
+            type: Array,
+            value: function() {
+              return [];
+            }
+          }
+        },
+
+        /**
+         * 폼 버튼 
+         */
+        buttons: {
+          type: Array,
+          value: function() {
+            return [ {
+              id: 'process-btn',
+              text: 'process'
+            }, {
+              id: 'return-btn',
+              text: 'return'
+            } ];
+          }
+        }
+      },
+
+      listeners : {
+        'process-btn-tap' : 'processTask',
+        'return-btn-tap' : 'returnTask',
+        'finish-task.things-ajax-response' : 'taskFinished'
+      },
+
+      /**
+       * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
+       */
+      _taskResponseChanged: function(response) {
+        this.steps = response.steps;
+        this.taskId = response.doc.id;
+        this.docTitle = response.doc.title;
+        this.docComment = response.doc.comments;
+        this.createdAt = response.doc.created_at;
+        this.submitter = response.doc.submitter;
+        var content = response.doc.content;
+
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
+        this.resourceFormFields = this._parseResourceFormFields(response.menuColumns);
+        this.menuInfo = response.menuInfo;
+
+        if(this.menuInfo.detail_form_id == 'things-resource-form') {
+          this._addResourceFormView(content);
+
+        } else if(this.menuInfo.detail_form_id == 'things-resource-detail') {
+          this._addResourceDetailView(content);
+
+        } else {
+          this._addCustomView(content);
+        }
+      },
+
+      /**
+       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
+       */
+      _addResourceFormView: function(content) {
+        var documentTab = this.$['document-tab'];
+        this.detailView = document.createElement('things-resource-form');
+        this.detailView.buttons = [];
+        this.detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(this.detailView);
+        var contentDoc = JSON.parse(content);
+        this.detailView.setFormData(contentDoc);
+      },
+
+      /**
+       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
+       */
+      _addResourceDetailView: function(content) {
+        var documentTab = this.$['document-tab'];
+        this.detailView = document.createElement('things-resource-detail');
+        this.detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(this.detailView);
+      },
+
+      /**
+       * 결재 문서 탭에 커스텀 뷰를 삽입 
+       */
+      _addCustomView: function(content) {
+        var documentTab = this.$['document-tab'];
+        var detailView = document.createElement(this.menuInfo.detail_form_id);
+        detailView.formFields = this.resourceFormFields;
+        documentTab.appendChild(detailView); 
+      },
+
+      /**
+       * 업무 처리 
+       */
+      processTask: function(e) {
+        var finishAjax = this.$['finish-task'];
+        finishAjax.resourceUrl = 'appr_tasks/:id/complete';
+        finishAjax.resourceId = this.taskId;
+        
+        var formData = this.detailView.serializeMyForm();
+        finishAjax.body = {
+          id : this.taskId,
+          comments : this.$['appr-comment'].value, 
+          content : JSON.stringify(formData)
+        };
+        finishAjax.generateRequest();
+      },
+
+      /**
+       * 반려 처리 
+       */
+      returnTask: function(e) {
+        var finishAjax = this.$['finish-task'];
+        finishAjax.resourceUrl = 'appr_tasks/:id/return';
+        finishAjax.body = { id : this.taskId, comments : this.opinion };
+        finishAjax.generateRequest();
+      },
+
+      /**
+       * 업무 처리 완료
+       */
+      taskFinished: function(e) {
+        this.fire('things-resource-form-saved', e.detail);
+      }
+    });
+  </script>
+</dom-module>

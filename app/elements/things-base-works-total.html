@@ -1,0 +1,92 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../things-ajax/things-ajax.html">
+<link rel="import" href="../../things-form/things-search-form.html">
+<link rel="import" href="../../things-grid/things-resource-grid.html">
+
+<link rel="import" href="../../things-content/things-resource-menu-content-behavior.html">
+
+<!--
+	업무함 - 전체 업무 화면 
+-->
+
+<dom-module id="things-base-works-total">
+	<template>
+		<style>
+			:host {
+				display: block;
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+			
+			things-resource-grid {
+				@apply(--layout-flex);
+			}
+		</style>
+
+		<things-ajax 
+			auto
+			id="resource-meta"
+			method="GET"
+			resource-url="[[menuMetaUrl]]"
+			last-response="{{metaData}}">
+		</things-ajax>
+
+		<things-search-form 
+			id="search-form"
+			title="[[menuInfo.title]]"
+			form-fields="[[searchFormFields]]" 
+			select-fields="[[selectFields]]"
+			sort-fields="[[sortFields]]"
+			initial-params="[[initialParams]]"
+			action-url="[[menuInfo.resource_url]]" 
+			page="{{page}}"
+			limit="{{limit}}"
+			last-response="{{lastResponse}}">
+		</things-search-form>
+
+		<things-resource-grid 
+			id="grid"
+			config="[[gridConfig]]"
+			model="[[gridModel]]" 
+			columns="[[gridColumns]]"
+			data="[[items]]"
+			total-count="[[itemCount]]"
+			current-page="{{page}}"
+			limit="{{limit}}"
+			fixed-column-count="[[menuInfo.fixed_columns]]"
+			grid-save-action="[[menuInfo.grid_save_url]]"
+			buttons="[[buttons]]"
+			export-file-name="[[menuInfo.title]]"
+			export-sheet-name="[[menuInfo.title]]">
+		</things-resource-grid>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'things-base-works-total',
+
+			behaviors: [
+				Things.ResourceMenuContentBehavior
+			],
+			
+			properties: {
+				/**
+				 * initial query parameters
+				 */
+				initialParams : {
+					type: String,
+					computed: '_computeInitialParams(globals.user.id)'
+				}
+			},
+
+			/**
+			 * 초기 파라미터에 사용자 아이디를 검색 조건에 추가 
+			 */
+			_computeInitialParams: function(userId) {
+				return 'approver_id=' + userId;
+			}
+
+		});
+	</script>
+</dom-module>

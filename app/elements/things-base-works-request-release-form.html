@@ -1,0 +1,349 @@
+<link rel="import" href="../../polymer/polymer.html">
+
+<link rel="import" href="../../things-ajax/things-ajax.html">
+<link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
+<link rel="import" href="../../things-form/things-form-behavior.html">
+<link rel="import" href="../../things-form/things-detail-form-behavior.html">
+<link rel="import" href="../../things-form/things-resource-form.html">
+<link rel="import" href="../../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../../things-spinner/things-spinner-behavior.html">
+
+<!--
+	배포 요청 기안 폼 
+-->
+
+<dom-module id="things-base-works-request-release-form">
+	<template>
+		<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+
+		<style>
+			:host {
+				display: block;
+				box-sizing: border-box;
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+
+			.layout-content {
+				@apply(--things-tight-padding);
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+				overflow: auto;
+			}
+
+			paper-toolbar {
+				background-color:var(--things-white-background-color);
+				height: 60px;
+				@apply(--things-tight-padding);
+			}
+
+			paper-toolbar::shadow #bottomBar {
+				height: 50px;
+				@apply(--layout-horizontal);
+				@apply(--layout-end-justified);
+				padding: 0 10px;
+			}
+		</style>
+
+		<things-ajax 
+			id="approval" 
+			resource-url="appr_docs"
+			resource-action="create">
+		</things-ajax>
+
+		<things-i18n-msg msgid="label.approval_info" msg="{{lApprInfo}}" auto hidden></things-i18n-msg>
+		<things-i18n-msg msgid="label.appr_doc" msg="{{lApprDoc}}" auto hidden></things-i18n-msg>
+
+		<paper-tabs selected="{{currentTabIndex}}">
+			<paper-tab>[[lApprInfo]]</paper-tab>
+			<paper-tab>[[lApprDoc]]</paper-tab>
+		</paper-tabs>
+
+		<iron-pages selected="{{currentTabIndex}}" class="layout-content">
+			<section class="layout-content">
+				<form is="iron-form" id="form" method="post" action="/form/handler" class="layout-content">
+					<div class="layout horizontal">
+						<things-i18n-msg msgid="label.title" msg="{{labelTitle}}" auto hidden></things-i18n-msg>
+						<things-i18n-msg msgid="label.appr_line" msg="{{labelAppline}}" auto hidden></things-i18n-msg>
+
+						<things-input-field 
+							class="flex" 
+							id="appr-doc-title"
+							name="name" 
+							label="[[labelTitle]]" 
+							required="true" 
+							maxlength="255" 
+							type="text">
+						</things-input-field>
+
+						<things-resource-field 
+							class="flex" 
+							id="appr-line-id"
+							name="appr_line" 
+							label="[[labelAppline]]" 
+							resource-type="Entity" 
+							resource-name="ApprLine" 
+							submit-name="appr_line_id">
+						</things-resource-field>
+					</div>
+
+					<div class="layout-content">
+						<things-i18n-msg msgid="label.comment" msg="{{labelComments}}" auto hidden></things-i18n-msg>
+
+						<things-textarea 
+							class="flex" 
+							id="appr-doc-comment"
+							rows="4" 
+							name="comments" 
+							value="[[comments]]"
+							label="[[labelComments]]">
+						</things-textarea>
+					</div>
+				</form>
+
+				<paper-toolbar id="toolbar" justify='end'>
+					<div class="bottom">
+						<things-button-bar id="button-group" buttons="[[formButtons]]"></things-button-bar>
+					</div>
+				</paper-toolbar>
+			</section>
+
+			<section id="detail-view" class="layout-content"></section>
+		</iron-pages>		
+	</template>
+
+	<script>
+		Polymer({
+
+			is: 'things-base-works-request-release-form',
+
+			properties: {
+
+				/**
+				 * 폼 타이틀 
+				 */
+				title: {
+					type: String
+				},
+
+				/**
+				 * 결재 하고자 하는 리소스 타입 
+				 */
+				resourceType: {
+					type: String
+				},
+
+				/**
+				 * 결재 하고자 하는 리소스 아이디 
+				 */
+				resourceId: {
+					type: String
+				},
+
+				/**
+				 * 결재 문서 오브젝트 
+				 */
+				resource: {
+					type: Object
+				},
+
+				/**
+				 * 결재 상신하는 메뉴 아이디 
+				 */
+				menuId: {
+					type: String
+				},
+
+				/**
+				 * 커맨트  
+				 */
+				comments: {
+					type: String
+				},
+
+				/**
+				 * 결재 정보 
+				 */
+				apprDoc: {
+					type: Object
+				},
+
+				/**
+				 * 폼 버튼 
+				 */
+				formButtons: {
+					type: Array,
+					value: function() {
+						return [ { id: 'submit-btn', text: 'submit' } ];
+					}
+				},
+
+				/**
+				 * 현재 선택된 탭 인덱스 
+				 */
+				currentTabIndex: {
+					value: 0
+				},
+
+				/**
+				 * 결재 문서 작성을 위한 상세 뷰 
+				 */
+				detailView: {
+					type: Object
+				}
+			},
+
+			behaviors: [
+				Things.FormBehavior,
+				Things.DetailFormBehavior,
+				Things.SpinnerBehavior,
+				Things.MsgBoxBehavior,
+				Things.MenuDetailCreateBahavior
+			],
+
+			listeners: {
+				'things-detail-view-created' : '_detailViewCreated',
+				'approval.things-ajax-response' : '_submitSuccess',
+				'submit-btn-tap' : 'submitApproval'
+			},
+
+			observers: [
+				'addDetailView(detailView)'
+			],
+			
+			/**
+			 * 결재 문서 Detail View를 화면에 추가
+			 *
+			 * @param {[type]} detailView [description]
+			 */
+			addDetailView :function(detailView) {
+				this.detailView = detailView;
+				var formElements = this.detailView.getFormElements();
+				formElements.forEach(function(element) { element.hidden = element.localName == 'things-stamp'; });
+				this.detailView.buttons = [];
+				this.$['detail-view'].appendChild(detailView)
+			},
+
+			/**
+			 * Detail View가 생성된 이후 ...
+			 *
+			 * @param {Object} event
+			 */
+			_detailViewCreated: function(event) {
+				this.addDetailView(event.detail.view, true, null);
+			},
+			
+			/**
+			 * 결재문서 상신 
+			 *
+			 * @param {Object} e 버튼 클릭 이벤트 
+			 */
+			submitApproval: function(e) {
+				e.preventDefault();
+
+				if(this.checkBeforeSubmit()) {
+					var me = this;
+
+					this.openConfirmMsg({
+						type: 'info',
+						title: Things.DataGlobal.t('label.final_confirm'),
+						text: Things.DataGlobal.t('text.Sure to process'),
+						cancelButtonText: Things.DataGlobal.t('button.cancel'),
+						showCancelButton: true
+
+					}, function() {
+						var apprDoc = me.buildApprDoc();
+						me.startSpinner();
+						me.$.approval.body = apprDoc;
+						me.$.approval.generateRequest();
+					});
+				}
+			},
+
+			/**
+			 * 결재 문서 정보 
+			 */
+			buildApprDoc: function() {
+				return { 
+					name: this.$['appr-doc-title'].value, 
+					appr_line_id: this.$['appr-line-id'].idValue, 
+					comments : this.$['appr-doc-comment'].value,
+					menu_id: this.menuId, 
+					on_type : this.resourceType,
+					on_id : this.resourceId,
+					content : this.serializeWorkDoc() 
+				};
+			},
+
+			/**
+			 * 결재 문서 Serialize
+			 */
+			serializeWorkDoc: function() {
+				if(this.detailView.serializeMyForm) {
+					var workDoc = this.detailView.serializeMyForm();
+					delete workDoc['id'];
+					delete workDoc['domain_id'];
+					return JSON.stringify(workDoc);
+				} else {
+					console.log(this.detailView);
+					return '';
+				}
+			},
+			
+			/**
+			 * 결재 문서 기안 전 Validation
+			 */
+			checkBeforeSubmit: function() {
+				// 타이틀, 결재라인 및 결재 문서가 비어 있는지 체크 
+				if(!this.$['appr-doc-title'].value) {
+					return this.showInvalidInput('label.title');
+				}
+
+				if(!this.$['appr-line-id'].idValue) {
+					return this.showInvalidInput('label.appr_line');
+				}
+
+				var content = this.serializeWorkDoc();
+				var contentDoc = JSON.parse(content);
+				var validContentInput = false;
+
+				for(key in contentDoc) {
+					if(contentDoc[key]) validContentInput = true;
+				}
+
+				if(!validContentInput) {
+					return this.showInvalidInput('label.appr_doc');
+				}
+
+				return true;
+			},
+
+			/**
+			 * Invalid input 경고 창 오픈
+			 */
+			showInvalidInput: function(emptyField) {
+				this.openConfirmMsg({ 
+					type: 'warning', 
+					title: Things.DataGlobal.t('text.invalid_input'), 
+					text: Things.DataGlobal.t('error.SHOULD_NOT_BE_EMPTY', {value : Things.DataGlobal.t(emptyField)}) 
+				});
+				
+				return false;
+			},
+
+			/**
+			 * 기안 요청 성공시 
+			 */
+			_submitSuccess: function(e) {
+				this.openConfirmMsg({
+					type: 'info',
+					title: Things.DataGlobal.t('label.success'),
+					text: Things.DataGlobal.t('text.Success to Process')
+				});
+
+				this.closePopupView();
+			}
+		});
+	</script>
+
+</dom-module>
