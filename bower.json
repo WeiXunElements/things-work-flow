@@ -1,31 +1,28 @@
 {
-  "name": "things-suite",
-  "private": true,
+  "name": "things-work-flow",
+  "version": "v2.0.1",
+  "authors": [
+    "Hatio Lab. <heartyoh@hatiolab.com>"
+  ],
+  "description": "Things Framework Work Flow",
+  "keywords": [
+    "web-component",
+    "polymer",
+    "seed"
+  ],
+  "main": "things-work-flow.html",
+  "license": "http://license.hatiolab.com/EULA",
+  "homepage": "https://github.com/ThingsElements/things-work-flow/",
+  "ignore": [
+    "/.*",
+    "/test/"
+  ],
   "dependencies": {
-    "platinum-sw": "PolymerElements/platinum-sw#1.2.3",
-    "polymer": "Polymer/polymer#1.4.0",
-    "font-roboto": "StartPolymer/font-empty#1.1.0",
-    "iron-elements": "PolymerElements/iron-elements",
-    "neon-animation": "PolymerElements/neon-animation#1.2.2",
-    "paper-elements": "PolymerElements/paper-elements",
-    "gold-elements": "PolymerElements/gold-elements",
-    "app-elements": "PolymerElements/app-elements",
-    "platinum-elements": "PolymerElements/platinum-elements",
-    "things-elements": "ThingsElements/things-elements",
-    "things-d3-chart": "ThingsElements/things-d3-chart",
-    "things-zpl": "^0.2.1",
-    "stomp-websocket": "^2.3.4",
-    "sockjs": "^0.3.4",
-    "things-libraries": "ThingsElements/things-libraries",
-    "things-layout-view": "ThingsElements/things-layout-view",
-    "web-animations-js": "#2.2.0"
+    "polymer": "Polymer/polymer#^1.2.0"
   },
   "devDependencies": {
-    "web-component-tester": "^4.2.0"
-  },
-  "license":"http://license.hatiolab.com/EULA",
-  "ignore": [],
-  "resolutions": {
-    "polymer": "^1.5.0"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "iron-demo-helpers": "^1.2.3"
   }
 }

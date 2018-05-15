@@ -1,16 +1,16 @@
-<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../../things-ajax/things-ajax.html">
-<link rel="import" href="../../things-form/things-search-form.html">
-<link rel="import" href="../../things-grid/things-resource-grid.html">
+<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-form/things-search-form.html">
+<link rel="import" href="../things-grid/things-resource-grid.html">
 
-<link rel="import" href="../../things-content/things-resource-menu-content-behavior.html">
+<link rel="import" href="../things-content/things-resource-menu-content-behavior.html">
 
 <!--
-	업무함 - 진행 업무 화면 
+	업무함 - 기안 업무 화면 
 -->
 
-<dom-module id="things-base-works-ing">
+<dom-module id="things-base-works-submit">
 	<template>
 		<style>
 			:host {
@@ -64,7 +64,7 @@
 
 	<script>
 		Polymer({
-			is: 'things-base-works-ing',
+			is: 'things-base-works-submit',
 
 			behaviors: [
 				Things.ResourceMenuContentBehavior
@@ -77,15 +77,27 @@
 				initialParams : {
 					type: String,
 					computed: '_computeInitialParams(globals.user.id)'
-				}
+				}				
+			},
+
+			listeners : {
+				'submit-btn-tap': 'submitDocument'
 			},
 
 			/**
-			 * 초기 검색 조건 파라미터에 사용자 아이디, 상태를 검색 조건에 추가 
+			 * 초기 파라미터에 사용자 아이디, 상태를 검색 조건에 추가 
 			 */
 			_computeInitialParams: function(userId) {
-				return 'approver_id=' + userId + ',status=ING';
+				return 'submitter_id=' + userId;
+			},
+
+			/**
+			 * 기안 문서 작성 
+			 */
+			submitDocument: function(e) {
+				this.showResourceForm({}, this.refreshGridData);
 			}
+
 		});
 	</script>
 </dom-module>

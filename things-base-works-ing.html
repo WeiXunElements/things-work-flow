@@ -1,16 +1,16 @@
-<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../../things-ajax/things-ajax.html">
-<link rel="import" href="../../things-form/things-search-form.html">
-<link rel="import" href="../../things-grid/things-resource-grid.html">
+<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-form/things-search-form.html">
+<link rel="import" href="../things-grid/things-resource-grid.html">
 
-<link rel="import" href="../../things-content/things-resource-menu-content-behavior.html">
+<link rel="import" href="../things-content/things-resource-menu-content-behavior.html">
 
 <!--
-	업무함 - 전체 업무 화면 
+	업무함 - 진행 업무 화면 
 -->
 
-<dom-module id="things-base-works-total">
+<dom-module id="things-base-works-ing">
 	<template>
 		<style>
 			:host {
@@ -64,7 +64,7 @@
 
 	<script>
 		Polymer({
-			is: 'things-base-works-total',
+			is: 'things-base-works-ing',
 
 			behaviors: [
 				Things.ResourceMenuContentBehavior
@@ -81,12 +81,11 @@
 			},
 
 			/**
-			 * 초기 파라미터에 사용자 아이디를 검색 조건에 추가 
+			 * 초기 검색 조건 파라미터에 사용자 아이디, 상태를 검색 조건에 추가 
 			 */
 			_computeInitialParams: function(userId) {
-				return 'approver_id=' + userId;
+				return 'approver_id=' + userId + ',status=ING';
 			}
-
 		});
 	</script>
 </dom-module>
