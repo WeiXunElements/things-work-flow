@@ -206,10 +206,6 @@
 				'approval.things-ajax-response' : '_submitSuccess',
 				'submit-btn-tap' : 'submitApproval'
 			},
-
-			observers: [
-				'addDetailView(detailView)'
-			],
 			
 			/**
 			 * 결재 문서 Detail View를 화면에 추가
@@ -218,18 +214,22 @@
 			 */
 			addDetailView :function(detailView) {
 				this.detailView = detailView;
-				var formElements = this.detailView.getFormElements();
-				formElements.forEach(function(element) { element.hidden = element.localName == 'things-stamp'; });
+				if(this.detailView.localName=='things-resource-form'){
+					var formElements = this.detailView.getFormElements();
+					formElements.forEach(function(element) { element.hidden = element.localName == 'things-stamp'; });
+				}
 				this.detailView.buttons = [];
 				this.$['detail-view'].appendChild(detailView)
+				this.fire('things-request-release-detail-view-added',{'detailView':detailView})
 			},
-
 			/**
 			 * Detail View가 생성된 이후 ...
 			 *
 			 * @param {Object} event
 			 */
 			_detailViewCreated: function(event) {
+				event.preventDefault();
+				event.stopPropagation();
 				this.addDetailView(event.detail.view, true, null);
 			},
 			
