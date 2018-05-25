@@ -11,6 +11,7 @@
 <link rel="import" href="../things-extension/things-extension.html">
 <link rel="import" href="../things-form/things-resource-form.html">
 <link rel="import" href="../things-meta/things-detail-form-meta-behavior.html">
+<link rel="import" href="things-base-works-detail-view-behavior.html">
 
 <!--
   처리 완료된 업무 화면
@@ -22,6 +23,29 @@
       :host {
         display: block;
         @apply(--layout-vertical);
+      }
+      #title {
+        --things-label: {
+          width: 12.5%;
+          min-height: 19px;
+          display: inline-block;
+          margin-bottom: 10px;
+          padding-right: 5px;
+          color: var(--things-primary-text-color);
+          font-size: 13px;
+          text-align: right;
+        }
+        --things-input: {
+            width: calc(82% + 5px);
+            margin-bottom: 10px;
+            padding: 3px 5px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, .2);
+            font-size: 15px;
+            font-weight: 300;
+        }
       }
 
       iron-pages {
@@ -77,7 +101,7 @@
       <!-- 결재 정보 탭 -->
       <div id="basic-task-info" class="layout vertical flex">
         <div class="layout vertical flex">
-          <things-input-field label="[[lTitle]]" value="[[docTitle]]" readonly>
+          <things-input-field id="title" label="[[lTitle]]" value="[[docTitle]]" readonly>
           </things-input-field>
 
           <div class="layout horizontal">
@@ -109,7 +133,9 @@
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-tab"></div>
+      <div id="document-info" class="layout vertical flex">
+        
+      </div>
     </iron-pages>
   </template>
 
@@ -119,8 +145,7 @@
       is: 'things-base-works-finished-detail',
 
       behaviors: [ 
-        Things.ResourceDetailTabViewBahavior,
-        Things.DetailFormMetaBehavior
+        Things.WorksDetailViewBehavior
       ],
 
       properties: {
@@ -132,7 +157,7 @@
           value: function() {
             return [ {
               title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-info'
+              elementId: 'basic-task-tab'
             }, {
               title: Things.DataGlobal.t('label.appr_doc'),
               elementId: 'document-tab'
@@ -234,51 +259,8 @@
         var content = response.doc.content;
 
         // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.resourceFormFields = this._parseResourceFormFields(response.menuColumns);
-        this.menuInfo = response.menuInfo;
-
-        if(this.menuInfo.detail_form_id == 'things-resource-form') {
-          this._addResourceFormView(content);
-
-        } else if(this.menuInfo.detail_form_id == 'things-resource-detail') {
-          this._addResourceDetailView(content);
-
-        } else {
-          this._addCustomView(content);
-        }
-      },
-
-      /**
-       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
-       */
-      _addResourceFormView: function(content) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-form');
-        this.detailView.formFields = this.resourceFormFields;
-        this.detailView.buttons = [];
-        documentTab.appendChild(this.detailView);
-        var contentDoc = JSON.parse(content);
-        this.detailView.setFormData(contentDoc);
-      },
-
-      /**
-       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
-       */
-      _addResourceDetailView: function(content) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-detail');
-        this.detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(this.detailView);
-      },
-
-      /**
-       * 결재 문서 탭에 커스텀 뷰를 삽입 
-       */
-      _addCustomView: function(content) {
-        var documentTab = this.$['document-tab'];
-        var detailView = document.createElement(this.menuInfo.detail_form_id);
-        detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(detailView); 
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
+        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
       }
     });
   </script>

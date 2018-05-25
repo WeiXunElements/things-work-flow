@@ -80,22 +80,11 @@
 				}				
 			},
 
-			listeners : {
-				'submit-btn-tap': 'submitDocument'
-			},
-
 			/**
 			 * 초기 파라미터에 사용자 아이디, 상태를 검색 조건에 추가 
 			 */
 			_computeInitialParams: function(userId) {
 				return 'submitter_id=' + userId;
-			},
-
-			/**
-			 * 기안 문서 작성 
-			 */
-			submitDocument: function(e) {
-				this.showResourceForm({}, this.refreshGridData);
 			}
 
 		});

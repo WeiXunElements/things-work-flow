@@ -7,21 +7,45 @@
 <link rel="import" href="../things-ajax/things-ajax.html">
 <link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
 <link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html">
+<link rel="import" href="../things-detail/things-menu-detail-view.html">
 <link rel="import" href="../things-form/things-resource-form.html">
 <link rel="import" href="../things-meta/things-detail-form-meta-behavior.html">
+<link rel="import" href="things-base-works-detail-view-behavior.html">
 
 <!--
   진행 중인 업무 처리 화면 
 -->
 
-<dom-module id="things-base-works-ing-detail">
+<dom-module id="things-base-works-detail">
   <template>
     <style>
       :host {
         display: block;
         @apply(--layout-vertical);
       }
-
+      #title {
+        --things-label: {
+          width: 12.5%;
+          min-height: 19px;
+          display: inline-block;
+          margin-bottom: 10px;
+          padding-right: 5px;
+          color: var(--things-primary-text-color);
+          font-size: 13px;
+          text-align: right;
+        }
+        --things-input: {
+            width: calc(82% + 5px);
+            margin-bottom: 10px;
+            padding: 3px 5px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 0, 0, .2);
+            font-size: 15px;
+            font-weight: 300;
+        }
+      }
       iron-pages {
         @apply(--things-default-padding);
         @apply(--layout-flex);
@@ -81,11 +105,13 @@
     <things-i18n-msg msgid="label.submit_comment" msg="{{lComment}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.opinion" msg="{{lOpinion}}" auto hidden></things-i18n-msg>
 
+    
+    
     <iron-pages id="tabPages" selected="{{currentTabIdx}}">
       <!-- 결재 정보 탭 -->
       <div id="basic-task-info" class="layout vertical flex">
         <div class="layout vertical flex">
-          <things-input-field label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
+          <things-input-field id="title" label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
 
           <div class="layout horizontal">
             <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly></things-input-field>
@@ -123,18 +149,19 @@
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-tab"></div>
+      <div id="document-info" class="layout vertical flex">
+        
+      </div>
     </iron-pages>
   </template>
 
   <script>
     Polymer({
 
-      is: 'things-base-works-ing-detail',
+      is: 'things-base-works-detail',
 
-      behaviors: [ 
-        Things.ResourceDetailTabViewBahavior,
-        Things.DetailFormMetaBehavior
+      behaviors: [
+        Things.WorksDetailViewBehavior
       ],
 
       properties: {
@@ -161,7 +188,7 @@
           value: function() {
             return [ {
               title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-info'
+              elementId: 'basic-task-tab'
             }, {
               title: Things.DataGlobal.t('label.appr_doc'),
               elementId: 'document-tab'
@@ -176,7 +203,6 @@
           type: Object,
           observer: '_taskResponseChanged'
         },
-
         /**
          * 문서 이름 
          */
@@ -335,7 +361,6 @@
         'return-btn-tap' : 'returnTask',
         'finish-task.things-ajax-response' : 'taskFinished'
       },
-
       /**
        * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
        */
@@ -347,53 +372,12 @@
         this.createdAt = response.doc.created_at;
         this.submitter = response.doc.submitter;
         var content = response.doc.content;
-
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.resourceFormFields = this._parseResourceFormFields(response.menuColumns);
-        this.menuInfo = response.menuInfo;
-
-        if(this.menuInfo.detail_form_id == 'things-resource-form') {
-          this._addResourceFormView(content);
-
-        } else if(this.menuInfo.detail_form_id == 'things-resource-detail') {
-          this._addResourceDetailView(content);
-
-        } else {
-          this._addCustomView(content);
+        if(response.doc.status && response.doc.status!='ING'){
+          this.buttons =[]
         }
-      },
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
+        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
 
-      /**
-       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
-       */
-      _addResourceFormView: function(content) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-form');
-        this.detailView.buttons = [];
-        this.detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(this.detailView);
-        var contentDoc = JSON.parse(content);
-        this.detailView.setFormData(contentDoc);
-      },
-
-      /**
-       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
-       */
-      _addResourceDetailView: function(content) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-detail');
-        this.detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(this.detailView);
-      },
-
-      /**
-       * 결재 문서 탭에 커스텀 뷰를 삽입 
-       */
-      _addCustomView: function(content) {
-        var documentTab = this.$['document-tab'];
-        var detailView = document.createElement(this.menuInfo.detail_form_id);
-        detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(detailView); 
       },
 
       /**
@@ -404,7 +388,7 @@
         finishAjax.resourceUrl = 'appr_tasks/:id/complete';
         finishAjax.resourceId = this.taskId;
         
-        var formData = this.detailView.serializeMyForm();
+        var formData = this.detailView.resource;
         finishAjax.body = {
           id : this.taskId,
           comments : this.$['appr-comment'].value, 

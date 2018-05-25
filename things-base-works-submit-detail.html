@@ -112,7 +112,9 @@
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-tab"></div>
+      <div id="document-info" class="layout vertical flex">
+        
+      </div>
     </iron-pages>
   </template>
 
@@ -123,8 +125,7 @@
 
       behaviors: [
         Things.MsgBoxBehavior,
-        Things.ResourceDetailTabViewBahavior,
-        Things.DetailFormMetaBehavior
+        Things.WorksDetailViewBehavior
       ],
 
       properties: {
@@ -214,7 +215,7 @@
           value: function() {
             return [ {
               title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-info'
+              elementId: 'basic-task-tab'
             }, {
               title: Things.DataGlobal.t('label.appr_doc'),
               elementId: 'document-tab'
@@ -252,10 +253,8 @@
         var contentDoc = JSON.parse(content);
         var validContentInput = false;
 
-        for(contentDoc in key) {
-          if(contentDoc[key]) {
-            validContentInput = true;
-          }
+        if (typeof contentDoc!=undefined || contentDoc!=null) {
+          validContentInput = true;
         }
 
         if(!validContentInput) {
@@ -264,50 +263,8 @@
         }
 
         // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.resourceFormFields = this._parseResourceFormFields(response.menuColumns);
-        this.menuInfo = response.menuInfo;
-
-        if(this.menuInfo.detail_form_id == 'things-resource-form') {
-          this._addResourceFormView(contentDoc);
-
-        } else if(this.menuInfo.detail_form_id == 'things-resource-detail') {
-          this._addResourceDetailView(contentDoc);
-
-        } else {
-          this._addCustomView(contentDoc);
-        }
-      },
-
-      /**
-       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
-       */
-      _addResourceFormView: function(contentDoc) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-form');
-        this.detailView.buttons = [];
-        this.detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(this.detailView);
-        this.detailView.setFormData(contentDoc);
-      },
-
-      /**
-       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
-       */
-      _addResourceDetailView: function(contentDoc) {
-        var documentTab = this.$['document-tab'];
-        this.detailView = document.createElement('things-resource-detail');
-        this.detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(this.detailView);
-      },
-
-      /**
-       * 결재 문서 탭에 커스텀 뷰를 삽입 
-       */
-      _addCustomView: function(contentDoc) {
-        var documentTab = this.$['document-tab'];
-        var detailView = document.createElement(this.menuInfo.detail_form_id);
-        detailView.formFields = this.resourceFormFields;
-        documentTab.appendChild(detailView); 
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
+        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
       }
     });
   </script>

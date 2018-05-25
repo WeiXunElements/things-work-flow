@@ -230,6 +230,8 @@
 			_detailViewCreated: function(event) {
 				event.preventDefault();
 				event.stopPropagation();
+				event.detail.view.resource = this.resource;
+				event.detail.view.menuInfo = this.menuInfo;
 				this.addDetailView(event.detail.view, true, null);
 			},
 			
@@ -268,9 +270,9 @@
 					name: this.$['appr-doc-title'].value, 
 					appr_line_id: this.$['appr-line-id'].idValue, 
 					comments : this.$['appr-doc-comment'].value,
-					menu_id: this.menuId, 
-					on_type : this.resourceType,
-					on_id : this.resourceId,
+					menu_id: this.detailView.menuInfo.id, 
+					on_type : this.detailView.menuInfo.resource_name,
+					on_id : this.detailView.resource.id,
 					content : this.serializeWorkDoc() 
 				};
 			},
@@ -279,14 +281,9 @@
 			 * 결재 문서 Serialize
 			 */
 			serializeWorkDoc: function() {
-				if(this.detailView.serializeMyForm) {
-					var workDoc = this.detailView.serializeMyForm();
-					delete workDoc['id'];
-					delete workDoc['domain_id'];
+				if(this.detailView.resource){
+					var workDoc = this.detailView.resource;
 					return JSON.stringify(workDoc);
-				} else {
-					console.log(this.detailView);
-					return '';
 				}
 			},
 			
