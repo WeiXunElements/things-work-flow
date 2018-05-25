@@ -3,9 +3,7 @@
 Copyright © HatioLab Inc. All rights reserved.
 -->
 <link rel="import" href="../polymer/polymer.html">
-
 <script>
-
 window.Things = window.Things || {};
 
 /**
@@ -15,116 +13,120 @@ window.Things = window.Things || {};
  * @polymerBehavior Things.WorksDetailViewBehavior
  */
 Things.WorksDetailViewBehaviorImpl = {
+  properties: {
+    detailView: {
+      type: Object
+    }
+  },
 
-      addDocumentTab: function(container, resource, menuInfo,menuColumns){
-      	this.__container = container;
-        this.detailViewMenuInfo = menuInfo;
-        this.detailViewResourceFormFields = this._parseResourceFormFields(menuColumns);
+  addDocumentTab: function(container, resource, menuInfo, menuColumns) {
+    this.__container = container;
+    this.detailViewMenuInfo = menuInfo;
+    this.detailViewResourceFormFields = this._parseResourceFormFields(menuColumns);
 
-        if(this.detailViewMenuInfo.detail_form_id == 'things-resource-form') {
-          this._addResourceFormView(resource);
+    if (this.detailViewMenuInfo.detail_form_id == 'things-resource-form') {
+      this._addResourceFormView(resource);
 
-        } else if(this.detailViewMenuInfo.detail_form_id == 'things-resource-detail') {
-          this._createResourceDetailView(resource,this.detailViewMenuInfo,this.detailViewResourceFormFields);
+    } else if (this.detailViewMenuInfo.detail_form_id == 'things-resource-detail') {
+      this._createResourceDetailView(resource, this.detailViewMenuInfo, this.detailViewResourceFormFields);
 
-        } else {
-          this._addCustomView(resource);
-        }
-      },
-      /**
-       * Detail View가 생성된 이후 ...
-       *
-       * @param {Object} event
-       */
-      _detailViewCreated: function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        this.__container.appendChild(event.detail.view);
-      },
+    } else {
+      this._addCustomView(resource);
+    }
+  },
+  /**
+   * Detail View가 생성된 이후 ...
+   *
+   * @param {Object} event
+   */
+  _detailViewCreated: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.__container.appendChild(event.detail.view);
+  },
 
-      /**
-       * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
-       */
-      _addResourceFormView: function(resource) {
-        this.detailView = document.createElement('things-resource-form');
-        this.detailView.buttons = [];
-        this.detailView.saveCallback = function(){};
-        this._setViewConfig('detail-view', this.detailView, resource, function(){});
-        this.__container.appendChild(this.detailView);
-      },
+  /**
+   * 결재 문서 탭에 기본 리소스 폼 뷰를 삽입 
+   */
+  _addResourceFormView: function(resource) {
+    this.detailView = document.createElement('things-resource-form');
+    this.detailView.buttons = [];
+    this.detailView.saveCallback = function() {};
+    this._setViewConfig('detail-view', this.detailView, resource, function() {});
+    this.__container.appendChild(this.detailView);
+  },
 
-      /**
-       * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
-       */
-      _createResourceDetailView: function(resource,menuInfo,resourceFormFields) {
-        this.detailView = document.createElement('things-menu-detail-view')
-        this.detailView.menuInfo = menuInfo;
-        this.detailView.resource = resource;
-        this.detailView.resourceFormFields = resourceFormFields
-        this.listen(this.detailView,'things-detail-view-created','_detailViewCreated')
-      },
+  /**
+   * 결재 문서 탭에 메뉴에서 사용하는 디테일 뷰를 삽입 
+   */
+  _createResourceDetailView: function(resource, menuInfo, resourceFormFields) {
+    this.detailView = document.createElement('things-menu-detail-view')
+    this.detailView.menuInfo = menuInfo;
+    this.detailView.resource = resource;
+    this.detailView.resourceFormFields = resourceFormFields
+    this.listen(this.detailView, 'things-detail-view-created', '_detailViewCreated')
+  },
 
-      /**
-       * 결재 문서 탭에 커스텀 뷰를 삽입 
-       */
-      _addCustomView: function(resource) {
-        var detailView = document.createElement(this.detailViewMenuInfo.detail_form_id);
-        detailView.attachable = true;
-        detailView.propExtensible = true;
-        detailView.saveCallback = function(){};
-        this._setViewConfig('detail-view', detailView, resource, function(){});
-        this.__container.appendChild(detailView); 
-      },
-      /**
-       * 선택된 레코드로 상세 뷰 Properties를 설정한다.
-       *****
-       * @param {String} elementId
-       * @param {Object} viewElement
-       * @param {Object} selectedRecord
-       * @param {Function} saveCallback 저장 후 콜백 함수
-       * @listens viewElement#things-resource-form-saved
-       * @listens viewElement#things-resource-form-created
-       */
-      _setViewConfig: function(elementId, viewElement, selectedRecord, saveCallback) {
-        viewElement.id = elementId;
+  /**
+   * 결재 문서 탭에 커스텀 뷰를 삽입 
+   */
+  _addCustomView: function(resource) {
+    this.detailView = document.createElement(this.detailViewMenuInfo.detail_form_id);
+    this.detailView.attachable = true;
+    this.detailView.propExtensible = true;
+    this.detailView.saveCallback = function() {};
+    this._setViewConfig('detail-view', this.detailView, resource, function() {});
+    this.__container.appendChild(this.detailView);
+  },
+  /**
+   * 선택된 레코드로 상세 뷰 Properties를 설정한다.
+   *****
+   * @param {String} elementId
+   * @param {Object} viewElement
+   * @param {Object} selectedRecord
+   * @param {Function} saveCallback 저장 후 콜백 함수
+   * @listens viewElement#things-resource-form-saved
+   * @listens viewElement#things-resource-form-created
+   */
+  _setViewConfig: function(elementId, viewElement, selectedRecord, saveCallback) {
+    viewElement.id = elementId;
 
-        if(selectedRecord && selectedRecord.name && selectedRecord.description) {
-          viewElement.title = selectedRecord.name + ' ( ' + selectedRecord.description +' )';
-        } else if (selectedRecord && selectedRecord[this.detailViewMenuInfo.title_field]) {
-          viewElement.title = selectedRecord[this.detailViewMenuInfo.title_field];
-        } else {
-          viewElement.title = this.detailViewMenuInfo.title ? this.detailViewMenuInfo.title : '';
-        }
+    if (selectedRecord && selectedRecord.name && selectedRecord.description) {
+      viewElement.title = selectedRecord.name + ' ( ' + selectedRecord.description + ' )';
+    } else if (selectedRecord && selectedRecord[this.detailViewMenuInfo.title_field]) {
+      viewElement.title = selectedRecord[this.detailViewMenuInfo.title_field];
+    } else {
+      viewElement.title = this.detailViewMenuInfo.title ? this.detailViewMenuInfo.title : '';
+    }
 
-        var idField = this.detailViewMenuInfo.id_field;
-        viewElement.idField = idField;
-        viewElement.formFields = this.detailViewResourceFormFields;
-        viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
-        viewElement.resourceType = this.detailViewMenuInfo.resource_name;
-        var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
-        viewElement.resourceId = resourceId;
-        if(selectedRecord) viewElement.resource = selectedRecord;
+    var idField = this.detailViewMenuInfo.id_field;
+    viewElement.idField = idField;
+    viewElement.formFields = this.detailViewResourceFormFields;
+    viewElement.removeFieldsOnSave = this.ignoreFieldsOnSave;
+    viewElement.resourceType = this.detailViewMenuInfo.resource_name;
+    var resourceId = selectedRecord ? (selectedRecord[idField] ? selectedRecord[idField] : selectedRecord.id) : null;
+    viewElement.resourceId = resourceId;
+    if (selectedRecord) viewElement.resource = selectedRecord;
 
-        var eventName = 'things-resource-form-saved';
-        if(resourceId) {
-          viewElement.resourceUrl = this.detailViewMenuInfo.resource_url + '/:id';
+    var eventName = 'things-resource-form-saved';
+    if (resourceId) {
+      viewElement.resourceUrl = this.detailViewMenuInfo.resource_url + '/:id';
 
-        } else {
-          eventName = 'things-resource-form-created';
-          viewElement.resourceUrl = this.detailViewMenuInfo.resource_url;
-        }
+    } else {
+      eventName = 'things-resource-form-created';
+      viewElement.resourceUrl = this.detailViewMenuInfo.resource_url;
+    }
 
-        viewElement.addEventListener(eventName, function(e) {
-          viewElement.closePopupView();
-          saveCallback.apply(this);
-        }.bind(this));
-      }
+    viewElement.addEventListener(eventName, function(e) {
+      viewElement.closePopupView();
+      saveCallback.apply(this);
+    }.bind(this));
+  }
 };
 
 Things.WorksDetailViewBehavior = [
-	Things.WorksDetailViewBehaviorImpl,
-    Things.ResourceDetailTabViewBahavior,
-    Things.DetailFormMetaBehavior
+  Things.WorksDetailViewBehaviorImpl,
+  Things.ResourceDetailTabViewBahavior,
+  Things.DetailFormMetaBehavior
 ]
-
 </script>
