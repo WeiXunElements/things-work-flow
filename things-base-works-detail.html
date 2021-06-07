@@ -1,20 +1,20 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../paper-tabs/paper-tab.html">
-<link rel="import" href="../paper-tabs/paper-tabs.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../paper-tabs/paper-tab.html" />
+<link rel="import" href="../paper-tabs/paper-tabs.html" />
+<link rel="import" href="../iron-pages/iron-pages.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html">
-<link rel="import" href="../things-detail/things-menu-detail-view.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html">
-<link rel="import" href="things-base-works-detail-view-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html" />
+<link rel="import" href="../things-detail/things-menu-detail-view.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html" />
+<link rel="import" href="things-base-works-detail-view-behavior.html" />
 
 <!--
   진행 중인 업무 처리 화면 
@@ -25,7 +25,7 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
+        @apply (--layout-vertical);
       }
       #title {
         --things-label: {
@@ -39,46 +39,46 @@ Copyright © HatioLab Inc. All rights reserved.
           text-align: right;
         }
         --things-input: {
-            width: calc(82% + 5px);
-            margin-bottom: 10px;
-            padding: 3px 5px;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            border-radius: 4px;
-            border: 1px solid rgba(0, 0, 0, .2);
-            font-size: 15px;
-            font-weight: 300;
+          width: calc(82% + 5px);
+          margin-bottom: 10px;
+          padding: 3px 5px;
+          -webkit-border-radius: 4px;
+          -moz-border-radius: 4px;
+          border-radius: 4px;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          font-size: 15px;
+          font-weight: 300;
         }
       }
       iron-pages {
-        @apply(--things-default-padding);
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
+        @apply (--things-default-padding);
+        @apply (--layout-flex);
+        @apply (--layout-vertical);
       }
 
       paper-toolbar {
-        background-color:var(--things-white-background-color);
+        background-color: var(--things-white-background-color);
         height: 60px;
-        @apply(--things-tight-padding);
+        @apply (--things-tight-padding);
       }
 
       paper-toolbar::shadow #bottomBar {
         height: 50px;
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
+        @apply (--layout-horizontal);
+        @apply (--layout-end-justified);
         padding: 0 10px;
       }
 
       .subtitle:before {
-        content: "";
-        @apply(--things-subtitle-icon);
+        content: '';
+        @apply (--things-subtitle-icon);
       }
 
       .subtitle {
-        @apply(--things-default-padding);
+        @apply (--things-default-padding);
         padding-bottom: 7px;
-        @apply(--things-subtitle);
-      }      
+        @apply (--things-subtitle);
+      }
     </style>
 
     <things-ajax
@@ -87,14 +87,11 @@ Copyright © HatioLab Inc. All rights reserved.
       method="GET"
       resource-url="appr_tasks/info/:id"
       resource-id="[[resourceId]]"
-      last-response="{{taskResponse}}">
+      last-response="{{taskResponse}}"
+    >
     </things-ajax>
 
-    <things-ajax
-      id="finish-task"
-      method="POST"
-      resource-id="[[resourceId]]"
-      content-type="application/json">
+    <things-ajax id="finish-task" method="POST" resource-id="[[resourceId]]" content-type="application/json">
     </things-ajax>
 
     <paper-tabs id="tabGroup" selected="{{currentTabIdx}}" noink scrollable>
@@ -108,7 +105,7 @@ Copyright © HatioLab Inc. All rights reserved.
     <things-i18n-msg msgid="label.created_at" msg="{{lRequestedAt}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.submit_comment" msg="{{lComment}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.opinion" msg="{{lOpinion}}" auto hidden></things-i18n-msg>
-    
+
     <iron-pages id="tabPages" selected="{{currentTabIdx}}">
       <!-- 결재 정보 탭 -->
       <div id="basic-task-info" class="layout vertical flex">
@@ -117,7 +114,12 @@ Copyright © HatioLab Inc. All rights reserved.
 
           <div class="layout horizontal">
             <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly></things-input-field>
-            <things-input-field class="flex" label="[[lRequestedAt]]" value="[[createdAt]]" readonly></things-input-field>
+            <things-input-field
+              class="flex"
+              label="[[lRequestedAt]]"
+              value="[[createdAt]]"
+              readonly
+            ></things-input-field>
           </div>
 
           <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly></things-textarea>
@@ -130,7 +132,7 @@ Copyright © HatioLab Inc. All rights reserved.
 
         <!-- 결재 이력 -->
         <div class="layout vertical flex">
-          <things-resource-grid 
+          <things-resource-grid
             class="flex"
             id="step-grid"
             model="[[stepGridModel]]"
@@ -139,11 +141,12 @@ Copyright © HatioLab Inc. All rights reserved.
             limit="1000"
             data="[[steps]]"
             fixed-column-count="0"
-            buttons="[[stepButton]]">
+            buttons="[[stepButton]]"
+          >
           </things-resource-grid>
         </div>
 
-        <paper-toolbar id="toolbar" justify='end'>
+        <paper-toolbar id="toolbar" justify="end">
           <div class="bottom">
             <things-button-bar id="button-group" buttons="[[buttons]]"></things-button-bar>
           </div>
@@ -151,20 +154,15 @@ Copyright © HatioLab Inc. All rights reserved.
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-info" class="layout vertical flex">
-        
-      </div>
+      <div id="document-info" class="layout vertical flex"></div>
     </iron-pages>
   </template>
 
   <script>
     Polymer({
-
       is: 'things-base-works-detail',
 
-      behaviors: [
-        Things.WorksDetailViewBehavior
-      ],
+      behaviors: [Things.WorksDetailViewBehavior],
 
       properties: {
         /**
@@ -172,7 +170,7 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         stepButton: {
           type: Array,
-          value: []
+          value: [],
         },
 
         /**
@@ -183,19 +181,22 @@ Copyright © HatioLab Inc. All rights reserved.
         },
 
         /**
-         * 탭 패널 
+         * 탭 패널
          */
         panels: {
           type: Array,
-          value: function() {
-            return [ {
-              title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-tab'
-            }, {
-              title: Things.DataGlobal.t('label.appr_doc'),
-              elementId: 'document-tab'
-            } ];
-          }
+          value: function () {
+            return [
+              {
+                title: Things.DataGlobal.t('label.approval_info'),
+                elementId: 'basic-task-tab',
+              },
+              {
+                title: Things.DataGlobal.t('label.appr_doc'),
+                elementId: 'document-tab',
+              },
+            ];
+          },
         },
 
         /**
@@ -203,45 +204,45 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         taskResponse: {
           type: Object,
-          observer: '_taskResponseChanged'
+          observer: '_taskResponseChanged',
         },
         /**
-         * 문서 이름 
+         * 문서 이름
          */
         docTitle: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성자
          */
         submitter: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성일시
          */
         createdAt: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성자 코멘트
          */
         docComment: {
-          type: String
+          type: String,
         },
 
         /**
          * 의견
          */
         opinion: {
-          type: String
+          type: String,
         },
 
         /**
-         * 메뉴 정보 
+         * 메뉴 정보
          */
         menuInfo: {
           type: Object,
@@ -259,20 +260,27 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         stepGridModel: {
           type: Array,
-          value: [ {
-            fieldName: 'id'
-          }, {
-            fieldName: 'step'
-          }, {
-            fieldName: 'approver',
-            dataType: 'object'
-          }, {
-            fieldName: 'status'
-          }, {
-            fieldName: 'updated_at'
-          }, {
-            fieldName: 'comments'
-          } ]
+          value: [
+            {
+              fieldName: 'id',
+            },
+            {
+              fieldName: 'step',
+            },
+            {
+              fieldName: 'approver',
+              dataType: 'object',
+            },
+            {
+              fieldName: 'status',
+            },
+            {
+              fieldName: 'updated_at',
+            },
+            {
+              fieldName: 'comments',
+            },
+          ],
         },
 
         /**
@@ -280,54 +288,61 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         stepGridColumns: {
           type: Array,
-          value: function() {
-            return [ {
-              name: 'id',
-              fieldName: 'id',
-              width: 0
-            }, {
-              name: 'step',
-              fieldName: 'step',
-              width: 50,
-              header: {
-                text: Things.DataGlobal.t('label.step')
-              }
-            }, {
-              name: 'status',
-              fieldName: 'status',
-              width: 100,
-              header: {
-                text: Things.DataGlobal.t('label.result')
-              }
-            }, {
-              name: 'approver',
-              fieldName: 'approver',
-              width: 180,
-              header: {
-                text: Things.DataGlobal.t('label.approver')
+          value: function () {
+            return [
+              {
+                name: 'id',
+                fieldName: 'id',
+                width: 0,
               },
-              valueType: 'text', 
-              type: 'calced',
-              valueCallback: function(column, row) {
-                var obj = row.getValue(column._name);
-                return obj ? obj.name : '';
-              }
-            }, {
-              name: 'updated_at',
-              fieldName: 'updated_at',
-              width: 135,
-              lookupDisplay: true,
-              header: {
-                text: Things.DataGlobal.t('label.confirmed_at')
-              }
-            }, {
-              name: 'comments',
-              fieldName: 'comments',
-              width: 600,
-              header: { 
-                text: Things.DataGlobal.t('label.opinion')
-              }
-            } ];
+              {
+                name: 'step',
+                fieldName: 'step',
+                width: 50,
+                header: {
+                  text: Things.DataGlobal.t('label.step'),
+                },
+              },
+              {
+                name: 'status',
+                fieldName: 'status',
+                width: 100,
+                header: {
+                  text: Things.DataGlobal.t('label.result'),
+                },
+              },
+              {
+                name: 'approver',
+                fieldName: 'approver',
+                width: 180,
+                header: {
+                  text: Things.DataGlobal.t('label.approver'),
+                },
+                valueType: 'text',
+                type: 'calced',
+                valueCallback: function (column, row) {
+                  var obj = row.getValue(column._name);
+                  return obj ? obj.name : '';
+                },
+              },
+              {
+                name: 'updated_at',
+                fieldName: 'updated_at',
+                width: 135,
+                lookupDisplay: true,
+                header: {
+                  text: Things.DataGlobal.t('label.confirmed_at'),
+                },
+              },
+              {
+                name: 'comments',
+                fieldName: 'comments',
+                width: 600,
+                header: {
+                  text: Things.DataGlobal.t('label.opinion'),
+                },
+              },
+            ];
           },
 
           /**
@@ -335,38 +350,41 @@ Copyright © HatioLab Inc. All rights reserved.
            */
           steps: {
             type: Array,
-            value: function() {
+            value: function () {
               return [];
-            }
-          }
+            },
+          },
         },
 
         /**
-         * 폼 버튼 
+         * 폼 버튼
          */
         buttons: {
           type: Array,
-          value: function() {
-            return [ {
-              id: 'process-btn',
-              text: 'process'
-            }, {
-              id: 'return-btn',
-              text: 'return'
-            } ];
-          }
-        }
+          value: function () {
+            return [
+              {
+                id: 'process-btn',
+                text: 'process',
+              },
+              {
+                id: 'return-btn',
+                text: 'return',
+              },
+            ];
+          },
+        },
       },
 
-      listeners : {
-        'process-btn-tap' : 'processTask',
-        'return-btn-tap' : 'returnTask',
-        'finish-task.things-ajax-response' : 'taskFinished'
+      listeners: {
+        'process-btn-tap': 'processTask',
+        'return-btn-tap': 'returnTask',
+        'finish-task.things-ajax-response': 'taskFinished',
       },
       /**
        * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
        */
-      _taskResponseChanged: function(response) {
+      _taskResponseChanged: function (response) {
         this.steps = response.steps;
         this.taskId = response.doc.id;
         this.docTitle = response.doc.title;
@@ -374,47 +392,46 @@ Copyright © HatioLab Inc. All rights reserved.
         this.createdAt = response.doc.created_at;
         this.submitter = response.doc.submitter;
         var content = response.doc.content;
-        if(response.doc.status && response.doc.status!='ING'){
-          this.buttons =[]
+        if (response.doc.status && response.doc.status != 'ING') {
+          this.buttons = [];
         }
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
-
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성
+        this.addDocumentTab(this.$$('#document-info'), JSON.parse(content), response.menuInfo, response.menuColumns);
       },
 
       /**
-       * 업무 처리 
+       * 업무 처리
        */
-      processTask: function(e) {
+      processTask: function (e) {
         var finishAjax = this.$['finish-task'];
         finishAjax.resourceUrl = 'appr_tasks/:id/complete';
         finishAjax.resourceId = this.taskId;
-        
+
         var formData = this.detailView.resource;
         finishAjax.body = {
-          id : this.taskId,
-          comments : this.$['appr-comment'].value, 
-          content : JSON.stringify(formData)
+          id: this.taskId,
+          comments: this.$['appr-comment'].value,
+          content: JSON.stringify(formData),
         };
         finishAjax.generateRequest();
       },
 
       /**
-       * 반려 처리 
+       * 반려 처리
        */
-      returnTask: function(e) {
+      returnTask: function (e) {
         var finishAjax = this.$['finish-task'];
         finishAjax.resourceUrl = 'appr_tasks/:id/return';
-        finishAjax.body = { id : this.taskId, comments : this.opinion };
+        finishAjax.body = { id: this.taskId, comments: this.opinion };
         finishAjax.generateRequest();
       },
 
       /**
        * 업무 처리 완료
        */
-      taskFinished: function(e) {
+      taskFinished: function (e) {
         this.fire('things-resource-form-saved', e.detail);
-      }
+      },
     });
   </script>
 </dom-module>

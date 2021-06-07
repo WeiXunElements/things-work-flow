@@ -1,16 +1,16 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
 
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-section/things-diy-based-grid.html">
-<link rel="import" href="../things-section/things-diy-based-form.html">
-<link rel="import" href="../things-content/things-resource-menu-content-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
-<link rel="import" href="../things-resource-selector/things-resource-selector-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-section/things-diy-based-grid.html" />
+<link rel="import" href="../things-section/things-diy-based-form.html" />
+<link rel="import" href="../things-content/things-resource-menu-content-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
+<link rel="import" href="../things-resource-selector/things-resource-selector-behavior.html" />
 
 <!--
 	업무함 - 완료 업무 화면
@@ -21,37 +21,39 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply (--layout-vertical);
+        @apply (--layout-flex);
       }
 
       things-resource-grid {
-        @apply(--layout-flex);
+        @apply (--layout-flex);
       }
     </style>
 
     <things-layout-gaia class="flex" content-title="Approval Line">
-      <things-ajax 
-        auto 
-        id="approval-line-detail" 
-        resource-action="index" 
-        resource-id="[[resourceId]]" 
-        resource-url="appr_lines/:id/appr_line_steps" 
-        last-response="{{lastResponse}}">
+      <things-ajax
+        auto
+        id="approval-line-detail"
+        resource-action="index"
+        resource-id="[[resourceId]]"
+        resource-url="appr_lines/:id/appr_line_steps"
+        last-response="{{lastResponse}}"
+      >
       </things-ajax>
 
-      <things-diy-based-grid 
-        content 
-        paginatable 
-        id="grid" 
-        class="flex" 
-        diy-grid-name="Base-WorksAppLine" 
-        page="{{page}}" 
-        limit="50" 
+      <things-diy-based-grid
+        content
+        paginatable
+        id="grid"
+        class="flex"
+        diy-grid-name="Base-WorksAppLine"
+        page="{{page}}"
+        limit="50"
         grid-save-url="[[gridSaveUrl]]"
-        items="[[lastResponse]]" 
-        item-count="[[itemCount]]" 
-        buttons="[[buttons]]">
+        items="[[lastResponse]]"
+        item-count="[[itemCount]]"
+        buttons="[[buttons]]"
+      >
       </things-diy-based-grid>
     </things-layout-gaia>
   </template>
@@ -60,11 +62,7 @@ Copyright © HatioLab Inc. All rights reserved.
     Polymer({
       is: 'things-base-works-approval-line',
 
-      behaviors: [
-        Things.DetailTabViewBahavior,
-        Things.ResourceSelectorBehavior,
-        Things.MsgBoxBehavior,
-      ],
+      behaviors: [Things.DetailTabViewBahavior, Things.ResourceSelectorBehavior, Things.MsgBoxBehavior],
 
       properties: {
         /**
@@ -72,7 +70,7 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         gridSaveUrl: {
           type: String,
-          computed: '_computeGridSaveUrl(resourceId)'
+          computed: '_computeGridSaveUrl(resourceId)',
         },
 
         /**
@@ -80,28 +78,32 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         buttons: {
           type: Array,
-          value: [{
-            id: 'add-btn',
-            text: 'add',
-            icon: 'icons:add'
-          }, {
-            id: 'save-btn',
-            text: 'save',
-            icon: 'icons:save'
-          }, {
-            id: 'delete-btn',
-            text: 'delete',
-            icon: 'icons:delete'
-          }]
-        }
+          value: [
+            {
+              id: 'add-btn',
+              text: 'add',
+              icon: 'icons:add',
+            },
+            {
+              id: 'save-btn',
+              text: 'save',
+              icon: 'icons:save',
+            },
+            {
+              id: 'delete-btn',
+              text: 'delete',
+              icon: 'icons:delete',
+            },
+          ],
+        },
       },
 
       listeners: {
         'grid.things-grid-resource-column-edit': '_onGridApproverColumnEdit',
-        'grid.things-grid-handle-built-writedata': '_onSetupWriteData'
+        'grid.things-grid-handle-built-writedata': '_onSetupWriteData',
       },
 
-      _computeGridSaveUrl: function(resourceId) {
+      _computeGridSaveUrl: function (resourceId) {
         return 'appr_lines/' + resourceId + '/appr_line_steps/update_multiple';
       },
 
@@ -110,7 +112,7 @@ Copyright © HatioLab Inc. All rights reserved.
        *
        * @param {Object} things-grid-resource-column-edit 이벤트
        */
-      _onGridApproverColumnEdit: function(e) {
+      _onGridApproverColumnEdit: function (e) {
         e.preventDefault();
         var index = e.detail.index;
         var grid = index._grid;
@@ -119,14 +121,14 @@ Copyright © HatioLab Inc. All rights reserved.
         if (!row.approver_type) return;
 
         if (!row.approver) {
-          row.approver = {id: null, name: null};
+          row.approver = { id: null, name: null };
           dataSet.updateRow(index.rowIndex, row);
         }
 
         var resourceObj = {
           resourceType: 'Entity',
           resourceName: row.approver_type,
-          ownerField: 'approver'
+          ownerField: 'approver',
         };
 
         this.openResourceSelectorByGrid(index._grid, index.rowIndex, resourceObj, true);
@@ -135,20 +137,19 @@ Copyright © HatioLab Inc. All rights reserved.
       /**
        * Write Data 셋업시 ...
        */
-      _onSetupWriteData: function(e) {
+      _onSetupWriteData: function (e) {
         var grid = e.target;
         var writeData = e.detail;
         var resourceId = this.resourceId;
 
-        writeData.forEach(function(data) {
+        writeData.forEach(function (data) {
           data.appr_line_id = resourceId;
           data.approver_id = data.approver ? '' + data.approver.id : '';
           delete data['approver'];
-        })
+        });
 
         grid.writeData = writeData;
-      }
-
+      },
     });
   </script>
 </dom-module>

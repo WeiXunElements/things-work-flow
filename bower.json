@@ -1,8 +1,8 @@
 {
   "name": "things-work-flow",
-  "version": "v2.0.2",
+  "version": "v2.0.3",
   "authors": [
-    "Hatio Lab. <heartyoh@hatiolab.com>"
+    "Shenzhen Weixun"
   ],
   "description": "Things Framework Work Flow",
   "keywords": [
@@ -11,8 +11,6 @@
     "seed"
   ],
   "main": "things-work-flow.html",
-  "license": "http://license.hatiolab.com/EULA",
-  "homepage": "https://github.com/ThingsElements/things-work-flow/",
   "ignore": [
     "/.*",
     "/test/"

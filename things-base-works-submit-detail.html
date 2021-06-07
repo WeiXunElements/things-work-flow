@@ -1,20 +1,20 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
 
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../paper-tabs/paper-tab.html">
-<link rel="import" href="../paper-tabs/paper-tabs.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../paper-tabs/paper-tab.html" />
+<link rel="import" href="../paper-tabs/paper-tabs.html" />
+<link rel="import" href="../iron-pages/iron-pages.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-i18n-msg/things-i18n-msg.html">
-<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html">
-<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-i18n-msg/things-i18n-msg.html" />
+<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html" />
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html" />
 
 <!--
 	업무함 - 기안 업무 상세 화면 
@@ -25,25 +25,25 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
+        @apply (--layout-vertical);
       }
 
       iron-pages {
-        @apply(--things-default-padding);
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
+        @apply (--things-default-padding);
+        @apply (--layout-flex);
+        @apply (--layout-vertical);
       }
 
       paper-toolbar {
-        background-color:var(--things-white-background-color);
+        background-color: var(--things-white-background-color);
         height: 60px;
-        @apply(--things-tight-padding);
+        @apply (--things-tight-padding);
       }
 
       paper-toolbar::shadow #bottomBar {
         height: 50px;
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
+        @apply (--layout-horizontal);
+        @apply (--layout-end-justified);
         padding: 0 10px;
       }
     </style>
@@ -54,14 +54,11 @@ Copyright © HatioLab Inc. All rights reserved.
       method="GET"
       resource-url="appr_docs/info/:id"
       resource-id="[[resourceId]]"
-      last-response="{{taskResponse}}">
+      last-response="{{taskResponse}}"
+    >
     </things-ajax>
 
-    <things-ajax
-      id="finish-task"
-      method="POST"
-      resource-id="[[resourceId]]"
-      content-type="application/json">
+    <things-ajax id="finish-task" method="POST" resource-id="[[resourceId]]" content-type="application/json">
     </things-ajax>
 
     <paper-tabs id="tabGroup" selected="{{currentTabIdx}}" noink scrollable>
@@ -86,146 +83,146 @@ Copyright © HatioLab Inc. All rights reserved.
       <!-- 결재 정보 탭 -->
       <div id="basic-task-info" class="layout vertical flex">
         <div class="layout vertical flex">
+          <div class="layout horizontal">
+            <things-input-field class="flex" label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lStatus]]" value="[[docStatus]]" readonly></things-input-field>
+          </div>
 
-        	<div class="layout horizontal">
-          	<things-input-field class="flex" label="[[lTitle]]" value="[[docTitle]]" readonly></things-input-field>
-          	<things-input-field class="flex" label="[[lStatus]]" value="[[docStatus]]" readonly></things-input-field>
-        	</div>
-
-        	<div class="layout horizontal">
-        		<things-input-field class="flex" label="[[lApprLine]]" value="[[apprLine]]" readonly></things-input-field>
+          <div class="layout horizontal">
+            <things-input-field class="flex" label="[[lApprLine]]" value="[[apprLine]]" readonly></things-input-field>
             <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly></things-input-field>
-        	</div>
+          </div>
 
-        	<div class="layout horizontal">
-        		<things-input-field class="flex" label="[[lApproverType]]" value="[[approverType]]" readonly></things-input-field>
-        		<things-input-field class="flex" label="[[lApprover]]" value="[[approver]]" readonly></things-input-field>
-        	</div>
+          <div class="layout horizontal">
+            <things-input-field
+              class="flex"
+              label="[[lApproverType]]"
+              value="[[approverType]]"
+              readonly
+            ></things-input-field>
+            <things-input-field class="flex" label="[[lApprover]]" value="[[approver]]" readonly></things-input-field>
+          </div>
 
-        	<div class="layout horizontal">
-        		<things-input-field class="flex" label="[[lStep]]" value="[[step]]" readonly></things-input-field>
-        		<things-input-field class="flex" label="[[lAction]]" value="[[action]]" readonly></things-input-field>
-        	</div>
+          <div class="layout horizontal">
+            <things-input-field class="flex" label="[[lStep]]" value="[[step]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lAction]]" value="[[action]]" readonly></things-input-field>
+          </div>
 
-        	<div class="layout horizontal">
-        		<things-input-field	class="flex" label="[[lOnType]]" value="[[onType]]" readonly></things-input-field>
-        		<things-input-field	class="flex" label="[[lOnId]]" value="[[onId]]" readonly></things-input-field>
-        	</div>
+          <div class="layout horizontal">
+            <things-input-field class="flex" label="[[lOnType]]" value="[[onType]]" readonly></things-input-field>
+            <things-input-field class="flex" label="[[lOnId]]" value="[[onId]]" readonly></things-input-field>
+          </div>
 
           <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly></things-textarea>
         </div>
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-info" class="layout vertical flex">
-        
-      </div>
+      <div id="document-info" class="layout vertical flex"></div>
     </iron-pages>
   </template>
 
   <script>
     Polymer({
-
       is: 'things-base-works-submit-detail',
 
-      behaviors: [
-        Things.MsgBoxBehavior,
-        Things.WorksDetailViewBehavior
-      ],
+      behaviors: [Things.MsgBoxBehavior, Things.WorksDetailViewBehavior],
 
       properties: {
-				
-				/**
-				 * 타이틀
-				 */
-				docTitle: {
-					type: String
-				},
-				
-				/**
-				 * 상태
-				 */
-				docStatus: {
-					type: String
-				},
-				
-				/**
-				 * 결재라인
-				 */
-				apprLine: {
-					type: String
-				},
-				
-				/**
-				 * 기안자
-				 */
-				submitter: {
-					type: String
-				},
-				
-				/**
-				 * 승인자 유형
-				 */
-				approverType: {
-					type: String
-				},
-				
-				/**
-				 * 승인자
-				 */
-				approver: {
-					type: String
-				},
-				
-				/**
-				 * 스텝
-				 */
-				step: {
-					type: String
-				},
-				
-				/**
-				 * 액션
-				 */
-				action: {
-					type: String
-				},
-				
-				/**
-				 * 리소스 타입
-				 */
-				resourceType: {
-					type: String
-				},
-				
-				/**
-				 * 리소스 아이디
-				 */
-				resourceId: {
-					type: String
-				},
-				
-				/**
-				 * 코멘트
-				 */
-				docComment: {
-					type: String
-				},
+        /**
+         * 타이틀
+         */
+        docTitle: {
+          type: String,
+        },
 
         /**
-         * 탭 패널 
+         * 상태
+         */
+        docStatus: {
+          type: String,
+        },
+
+        /**
+         * 결재라인
+         */
+        apprLine: {
+          type: String,
+        },
+
+        /**
+         * 기안자
+         */
+        submitter: {
+          type: String,
+        },
+
+        /**
+         * 승인자 유형
+         */
+        approverType: {
+          type: String,
+        },
+
+        /**
+         * 승인자
+         */
+        approver: {
+          type: String,
+        },
+
+        /**
+         * 스텝
+         */
+        step: {
+          type: String,
+        },
+
+        /**
+         * 액션
+         */
+        action: {
+          type: String,
+        },
+
+        /**
+         * 리소스 타입
+         */
+        resourceType: {
+          type: String,
+        },
+
+        /**
+         * 리소스 아이디
+         */
+        resourceId: {
+          type: String,
+        },
+
+        /**
+         * 코멘트
+         */
+        docComment: {
+          type: String,
+        },
+
+        /**
+         * 탭 패널
          */
         panels: {
           type: Array,
-          value: function() {
-            return [ {
-              title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-tab'
-            }, {
-              title: Things.DataGlobal.t('label.appr_doc'),
-              elementId: 'document-tab'
-            } ];
-          }
+          value: function () {
+            return [
+              {
+                title: Things.DataGlobal.t('label.approval_info'),
+                elementId: 'basic-task-tab',
+              },
+              {
+                title: Things.DataGlobal.t('label.appr_doc'),
+                elementId: 'document-tab',
+              },
+            ];
+          },
         },
 
         /**
@@ -233,44 +230,48 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         taskResponse: {
           type: Object,
-          observer: '_taskResponseChanged'
-        }
+          observer: '_taskResponseChanged',
+        },
       },
 
       /**
        * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
        */
-      _taskResponseChanged: function(response) {
+      _taskResponseChanged: function (response) {
         var apprDoc = response.doc;
-				this.docTitle = apprDoc.name;
-				this.docStatus = apprDoc.status;
-				this.apprLine = apprDoc.appr_line.name;
-				this.submitter = apprDoc.submitter.name;
-				this.approverType = apprDoc.approver_type;
-				this.approver = apprDoc.approver.name;
-				this.step = apprDoc.step;
-				this.action = apprDoc.appr_action.name;
-				this.onType = apprDoc.on_type;
-				this.onId = apprDoc.on_id;
-				this.docComment = apprDoc.comments;
-        
-				var content = apprDoc.content;
+        this.docTitle = apprDoc.name;
+        this.docStatus = apprDoc.status;
+        this.apprLine = apprDoc.appr_line.name;
+        this.submitter = apprDoc.submitter.name;
+        this.approverType = apprDoc.approver_type;
+        this.approver = apprDoc.approver.name;
+        this.step = apprDoc.step;
+        this.action = apprDoc.appr_action.name;
+        this.onType = apprDoc.on_type;
+        this.onId = apprDoc.on_id;
+        this.docComment = apprDoc.comments;
+
+        var content = apprDoc.content;
         var contentDoc = JSON.parse(content);
         var validContentInput = false;
 
-        if (typeof contentDoc!=undefined || contentDoc!=null) {
+        if (typeof contentDoc != undefined || contentDoc != null) {
           validContentInput = true;
         }
 
-        if(!validContentInput) {
-          this.openConfirmMsg({ type: 'warning', title: Things.DataGlobal.t('text.invalid_input'), text: Things.DataGlobal.t('text.X is empty', {x : Things.DataGlobal.t('label.appr_doc')}) });
+        if (!validContentInput) {
+          this.openConfirmMsg({
+            type: 'warning',
+            title: Things.DataGlobal.t('text.invalid_input'),
+            text: Things.DataGlobal.t('text.X is empty', { x: Things.DataGlobal.t('label.appr_doc') }),
+          });
           return;
         }
 
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
-      }
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성
+        this.addDocumentTab(this.$$('#document-info'), JSON.parse(content), response.menuInfo, response.menuColumns);
+      },
     });
   </script>
 </dom-module>

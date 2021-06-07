@@ -1,23 +1,22 @@
-
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
 
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../paper-tabs/paper-tab.html">
-<link rel="import" href="../paper-tabs/paper-tabs.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../paper-tabs/paper-tab.html" />
+<link rel="import" href="../paper-tabs/paper-tabs.html" />
+<link rel="import" href="../iron-pages/iron-pages.html" />
 
-<link rel="import" href="../things-ajax/things-ajax.html">
-<link rel="import" href="../things-attached-file/things-attached-file.html">
-<link rel="import" href="../things-code-editor/things-code-editor.html">
-<link rel="import" href="../things-code-editor/things-template-editor.html">
-<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html">
-<link rel="import" href="../things-extension/things-extension.html">
-<link rel="import" href="../things-form/things-resource-form.html">
-<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html">
-<link rel="import" href="things-base-works-detail-view-behavior.html">
+<link rel="import" href="../things-ajax/things-ajax.html" />
+<link rel="import" href="../things-attached-file/things-attached-file.html" />
+<link rel="import" href="../things-code-editor/things-code-editor.html" />
+<link rel="import" href="../things-code-editor/things-template-editor.html" />
+<link rel="import" href="../things-detail/things-resource-detail-tab-view-behavior.html" />
+<link rel="import" href="../things-extension/things-extension.html" />
+<link rel="import" href="../things-form/things-resource-form.html" />
+<link rel="import" href="../things-meta/things-detail-form-meta-behavior.html" />
+<link rel="import" href="things-base-works-detail-view-behavior.html" />
 
 <!--
   처리 완료된 업무 화면
@@ -28,7 +27,7 @@ Copyright © HatioLab Inc. All rights reserved.
     <style>
       :host {
         display: block;
-        @apply(--layout-vertical);
+        @apply (--layout-vertical);
       }
       #title {
         --things-label: {
@@ -42,34 +41,34 @@ Copyright © HatioLab Inc. All rights reserved.
           text-align: right;
         }
         --things-input: {
-            width: calc(82% + 5px);
-            margin-bottom: 10px;
-            padding: 3px 5px;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            border-radius: 4px;
-            border: 1px solid rgba(0, 0, 0, .2);
-            font-size: 15px;
-            font-weight: 300;
+          width: calc(82% + 5px);
+          margin-bottom: 10px;
+          padding: 3px 5px;
+          -webkit-border-radius: 4px;
+          -moz-border-radius: 4px;
+          border-radius: 4px;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          font-size: 15px;
+          font-weight: 300;
         }
       }
 
       iron-pages {
-        @apply(--things-default-padding);
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
+        @apply (--things-default-padding);
+        @apply (--layout-flex);
+        @apply (--layout-vertical);
       }
 
       .subtitle:before {
-        content: "";
-        @apply(--things-subtitle-icon);
+        content: '';
+        @apply (--things-subtitle-icon);
       }
 
       .subtitle {
-        @apply(--things-default-padding);
+        @apply (--things-default-padding);
         padding-bottom: 7px;
-        @apply(--things-subtitle);
-      }      
+        @apply (--things-subtitle);
+      }
     </style>
 
     <things-ajax
@@ -78,14 +77,11 @@ Copyright © HatioLab Inc. All rights reserved.
       method="GET"
       resource-url="appr_tasks/info/:id"
       resource-id="[[resourceId]]"
-      last-response="{{taskResponse}}">
+      last-response="{{taskResponse}}"
+    >
     </things-ajax>
 
-    <things-ajax
-      id="finish-task"
-      method="POST"
-      resource-id="[[resourceId]]"
-      content-type="application/json">
+    <things-ajax id="finish-task" method="POST" resource-id="[[resourceId]]" content-type="application/json">
     </things-ajax>
 
     <paper-tabs id="tabGroup" selected="{{currentTabIdx}}" noink scrollable>
@@ -98,7 +94,7 @@ Copyright © HatioLab Inc. All rights reserved.
     <things-i18n-msg msgid="label.submitter" msg="{{lSubmitter}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.created_at" msg="{{lRequestedAt}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.submit_comment" msg="{{lComment}}" auto hidden></things-i18n-msg>
-    
+
     <things-i18n-msg msgid="label.status" msg="{{lStatus}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.processed_at" msg="{{lProcessedAt}}" auto hidden></things-i18n-msg>
     <things-i18n-msg msgid="label.opinion" msg="{{lOpinion}}" auto hidden></things-i18n-msg>
@@ -107,8 +103,7 @@ Copyright © HatioLab Inc. All rights reserved.
       <!-- 결재 정보 탭 -->
       <div id="basic-task-info" class="layout vertical flex">
         <div class="layout vertical flex">
-          <things-input-field id="title" label="[[lTitle]]" value="[[docTitle]]" readonly>
-          </things-input-field>
+          <things-input-field id="title" label="[[lTitle]]" value="[[docTitle]]" readonly> </things-input-field>
 
           <div class="layout horizontal">
             <things-input-field class="flex" label="[[lSubmitter]]" value="[[submitter]]" readonly>
@@ -117,8 +112,7 @@ Copyright © HatioLab Inc. All rights reserved.
             </things-input-field>
           </div>
 
-          <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly>
-          </things-textarea>
+          <things-textarea class="flex" label="[[lComment]]" value="[[docComment]]" readonly> </things-textarea>
         </div>
 
         <span class="subtitle">
@@ -127,48 +121,45 @@ Copyright © HatioLab Inc. All rights reserved.
 
         <div class="layout vertical flex">
           <div class="layout horizontal">
-            <things-input-field class="flex" label="[[lStatus]]" value="[[taskStatus]]" readonly>
-            </things-input-field>
+            <things-input-field class="flex" label="[[lStatus]]" value="[[taskStatus]]" readonly> </things-input-field>
             <things-input-field class="flex" label="[[lProcessedAt]]" value="[[taskProcessedAt]]" readonly>
             </things-input-field>
           </div>
 
           <things-textarea id="appr-comment" class="flex" label="[[lOpinion]]" value="[[taskComment]]">
-          </things-textarea>        
+          </things-textarea>
         </div>
       </div>
 
       <!-- 결재 문서 탭 -->
-      <div id="document-info" class="layout vertical flex">
-        
-      </div>
+      <div id="document-info" class="layout vertical flex"></div>
     </iron-pages>
   </template>
 
   <script>
     Polymer({
-
       is: 'things-base-works-finished-detail',
 
-      behaviors: [ 
-        Things.WorksDetailViewBehavior
-      ],
+      behaviors: [Things.WorksDetailViewBehavior],
 
       properties: {
         /**
-         * 탭 패널 
+         * 탭 패널
          */
         panels: {
           type: Array,
-          value: function() {
-            return [ {
-              title: Things.DataGlobal.t('label.approval_info'),
-              elementId: 'basic-task-tab'
-            }, {
-              title: Things.DataGlobal.t('label.appr_doc'),
-              elementId: 'document-tab'
-            } ];
-          }
+          value: function () {
+            return [
+              {
+                title: Things.DataGlobal.t('label.approval_info'),
+                elementId: 'basic-task-tab',
+              },
+              {
+                title: Things.DataGlobal.t('label.appr_doc'),
+                elementId: 'document-tab',
+              },
+            ];
+          },
         },
 
         /**
@@ -176,67 +167,67 @@ Copyright © HatioLab Inc. All rights reserved.
          */
         taskResponse: {
           type: Object,
-          observer: '_taskResponseChanged'
+          observer: '_taskResponseChanged',
         },
 
         /**
          * ApprTask ID
          */
         taskId: {
-          type: String
+          type: String,
         },
 
         /**
          * ApprTask Status
          */
         taskStatus: {
-          type: String
+          type: String,
         },
 
         /**
          * ApprTask Comment
          */
         taskComment: {
-          type: String
+          type: String,
         },
 
         /**
          * ApprTask ProcessedAt
          */
         taskProcessedAt: {
-          type: String
+          type: String,
         },
 
         /**
-         * 문서 이름 
+         * 문서 이름
          */
         docTitle: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성자
          */
         submitter: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성일시
          */
         docCreatedAt: {
-          type: String
+          type: String,
         },
 
         /**
          * 작성자 코멘트
          */
         docComment: {
-          type: String
+          type: String,
         },
 
         /**
-         * 메뉴 정보 
+         * 메뉴 정보
          */
         menuInfo: {
           type: Object,
@@ -246,28 +237,28 @@ Copyright © HatioLab Inc. All rights reserved.
          * Resource Form Fields
          */
         resourceFormFields: {
-          type: Array
-        }
+          type: Array,
+        },
       },
 
       /**
        * id를 통해 task의 정보를 조회하고 해당 정보들을 input field에 맵핑
        */
-      _taskResponseChanged: function(response) {
+      _taskResponseChanged: function (response) {
         this.taskId = response.doc.id;
         this.taskStatus = response.doc.status;
-        this.taskComment = response.doc.task_comment,
-        this.taskProcessedAt = response.doc.processed_at,
-        this.docTitle = response.doc.title;
+        (this.taskComment = response.doc.task_comment),
+          (this.taskProcessedAt = response.doc.processed_at),
+          (this.docTitle = response.doc.title);
         this.docComment = response.doc.comments;
         this.docCreatedAt = response.doc.created_at;
         this.submitter = response.doc.submitter;
         var content = response.doc.content;
 
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        // 메뉴 메타 정보로 결재 문서 뷰를 생성 
-        this.addDocumentTab(this.$$('#document-info'),JSON.parse(content), response.menuInfo, response.menuColumns);
-      }
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성
+        // 메뉴 메타 정보로 결재 문서 뷰를 생성
+        this.addDocumentTab(this.$$('#document-info'), JSON.parse(content), response.menuInfo, response.menuColumns);
+      },
     });
   </script>
 </dom-module>
